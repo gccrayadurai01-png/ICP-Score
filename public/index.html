@@ -74,7 +74,6 @@
       </div>
       <button class="btn btn-sync" id="btnSyncHubspot" title="Pull latest data from HubSpot">Sync Now</button>
       <button class="btn btn-secondary" id="btnRefresh">Refresh</button>
-      <button class="btn btn-primary" id="btnScoreAll">Score All Contacts</button>
     </div>
   </header>
 
@@ -368,10 +367,6 @@
               <label class="switch"><input type="checkbox" id="pullEnrich" checked /><span class="slider"></span></label>
               <span>Enrich via Apollo</span>
             </label>
-            <label class="hs-toggle-label">
-              <label class="switch"><input type="checkbox" id="pullWriteBack" /><span class="slider"></span></label>
-              <span>Write scores back to HubSpot after scoring</span>
-            </label>
             <div class="hs-filter-block" style="padding:0">
               <label class="hs-filter-label" style="margin-bottom:6px">Assign to Rep (tracking)</label>
               <select class="filter-select" id="pullRepSelect">
@@ -403,7 +398,6 @@
       <div class="hs-results-summary">
         <div class="cards-row" id="pullStatsCards"></div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-primary" id="btnPullUpdateAll">Update All in HubSpot</button>
           <button class="btn btn-secondary" id="btnPullDownloadCSV">Download CSV</button>
           <span class="hs-result-count" id="pullResultCount"></span>
         </div>
@@ -507,7 +501,6 @@
           <h3>Enriched &amp; Scored Leads</h3>
           <div style="display:flex;gap:8px;align-items:center">
             <button class="btn btn-secondary" id="btnDownloadCSV">Download CSV</button>
-            <button class="btn btn-primary" id="btnPushHubspot">Push to HubSpot</button>
           </div>
         </div>
         <div class="table-scroll">
@@ -569,9 +562,9 @@
   <!-- ══════════════ RUN SCORING ════════════════════════════════════════════ -->
   <section class="view" id="view-score">
     <div class="action-card">
-      <h2>Score All HubSpot Contacts</h2>
-      <p>Fetches every contact from HubSpot, calculates their ICP score based on the current scoring model, and writes <code>icp_score</code>, <code>icp_category</code>, and <code>icp_priority</code> back to each record.</p>
-      <button class="btn btn-primary btn-lg" id="btnScoreAllBig">Run Scoring Now</button>
+      <h2>Re-score All Cached Contacts</h2>
+      <p>Re-calculates ICP scores for all locally cached contacts using the current scoring model. No data is written back to HubSpot — scores are stored in the local database only.</p>
+      <button class="btn btn-primary btn-lg" id="btnScoreAllBig">Re-score Now</button>
       <div class="score-progress hidden" id="scoreProgress"><div class="spinner"></div><span id="scoreProgressMsg">Scoring…</span></div>
       <div class="score-result hidden" id="scoreResult"></div>
     </div>

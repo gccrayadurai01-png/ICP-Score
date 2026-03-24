@@ -91,8 +91,6 @@ function switchView(view) {
   };
   document.getElementById('pageTitle').textContent = titles[view] || 'ICP Score';
 
-  const btn = document.getElementById('btnScoreAll');
-  btn.style.display = (view === 'pdf' || view === 'admin' || view === 'rep-tracker' || view === 'hubspot-pull') ? 'none' : '';
 
   if (view === 'dashboard')      loadDashboard();
   if (view === 'contacts')       loadContacts();
@@ -988,9 +986,6 @@ async function loadHubspotPullView() {
   // Clear filters
   document.getElementById('btnClearPullFilters').addEventListener('click', clearPullFilters);
 
-  // Update all in HubSpot
-  const btnUpdateAll = document.getElementById('btnPullUpdateAll');
-  if (btnUpdateAll) btnUpdateAll.addEventListener('click', () => pushSelectedToHubSpot(true));
 
   // Download CSV
   const btnCSV = document.getElementById('btnPullDownloadCSV');
@@ -1131,7 +1126,6 @@ async function pullAndScore() {
     const mqlType           = document.getElementById('pullMqlType').value;
     const lifecycleStage    = document.getElementById('pullLifecycle').value;
     const enrich            = document.getElementById('pullEnrich').checked;
-    const writeBack         = document.getElementById('pullWriteBack').checked;
     const repId             = document.getElementById('pullRepSelect').value;
 
     const leadSources = [...selectedLeadSources];
@@ -1143,7 +1137,7 @@ async function pullAndScore() {
       mqlType:       mqlType || undefined,
       lifecycleStage: lifecycleStage || undefined,
       leadSources,
-      enrich, writeBack,
+      enrich,
       repId: repId || undefined
     };
 
@@ -1245,12 +1239,6 @@ function renderPullResults(contacts) {
       <td>${scoreBreakdownMini(l.breakdown)}</td>
       <td>${categoryBadge(l.category)}</td>
       <td>${priorityBadge(l.priority)}</td>
-      <td>
-        <button class="btn btn-xs btn-primary" onclick="pushSingleToHubSpot(${i})" title="Update in HubSpot">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          Update
-        </button>
-      </td>
     </tr>`;
   }).join('');
 }
@@ -1261,64 +1249,6 @@ function filterPullTable() {
   rows.forEach(row => {
     row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
-}
-
-async function pushSingleToHubSpot(idx) {
-  const lead = pullLeads[idx];
-  if (!lead || !lead._hubspotId) {
-    showToast('No HubSpot ID for this contact'); return;
-  }
-  try {
-    await apiFetch('/score/' + lead._hubspotId + '?save=true', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        icp_score:    String(lead.score),
-        icp_category: lead.category,
-        icp_priority: lead.priority
-      })
-    });
-    showToast(`Updated ${lead.name || lead.email} in HubSpot ✅`);
-  } catch (err) {
-    // Fallback: direct batch update with what we have
-    showToast('Update failed: ' + err.message);
-  }
-}
-
-async function pushSelectedToHubSpot(all = false) {
-  let targets = [];
-  if (all) {
-    targets = pullLeads.filter(l => l._hubspotId);
-  } else {
-    const checked = [...document.querySelectorAll('.pull-row-chk:checked')].map(c => parseInt(c.dataset.idx));
-    targets = checked.map(i => pullLeads[i]).filter(l => l && l._hubspotId);
-  }
-  if (!targets.length) { showToast('No contacts to update'); return; }
-
-  const btn = document.getElementById('btnPullUpdateAll');
-  if (btn) { btn.disabled = true; btn.textContent = `Updating ${targets.length}…`; }
-
-  try {
-    const updates = targets.map(l => ({
-      id: l._hubspotId,
-      properties: {
-        icp_score:    String(l.score),
-        icp_category: l.category,
-        icp_priority: l.priority
-      }
-    }));
-    await apiFetch('/hubspot/batch-update', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ updates })
-    });
-
-    showToast(`Updated ${targets.length} contacts in HubSpot`, 4000);
-  } catch (err) {
-    showToast('Batch update failed: ' + err.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Update All in HubSpot'; }
-  }
 }
 
 function downloadPullCSV() {
@@ -1389,33 +1319,28 @@ function filterContacts() {
 // ══════════════════════════════════════════════════════════════════════════════
 
 async function runScoringAll() {
-  const btns     = [document.getElementById('btnScoreAll'), document.getElementById('btnScoreAllBig')];
+  const btn      = document.getElementById('btnScoreAllBig');
   const progress = document.getElementById('scoreProgress');
   const result   = document.getElementById('scoreResult');
-  btns.forEach(b => { if(b) b.disabled = true; });
+  if (btn) btn.disabled = true;
   progress.classList.remove('hidden');
   result.classList.add('hidden');
-  document.getElementById('scoreProgressMsg').textContent = 'Fetching contacts…';
+  document.getElementById('scoreProgressMsg').textContent = 'Re-scoring cached contacts…';
   try {
-    const data = await apiFetch('/score/all', { method: 'POST' });
+    const data = await apiFetch('/sync/rescore', { method: 'POST' });
     progress.classList.add('hidden');
-    const bk = data.log.reduce((acc,c) => { acc[c.category]=(acc[c.category]||0)+1; return acc; }, {});
     result.className = 'score-result success';
-    result.innerHTML = `<strong>Done!</strong> ${data.updated} contacts scored.<br/><br/>
-      Core ICP: <b>${bk['Core ICP']||0}</b> &nbsp;·&nbsp;
-      Strong ICP: <b>${bk['Strong ICP']||0}</b> &nbsp;·&nbsp;
-      Moderate ICP: <b>${bk['Moderate ICP']||0}</b> &nbsp;·&nbsp;
-      Non ICP: <b>${bk['Non ICP']||0}</b>`;
+    result.innerHTML = `<strong>Done!</strong> ${data.rescored} contacts re-scored locally.`;
     result.classList.remove('hidden');
-    showToast(`Scored ${data.updated} contacts`);
+    showToast(`Re-scored ${data.rescored} contacts`);
   } catch (err) {
     progress.classList.add('hidden');
     result.className  = 'score-result error';
     result.textContent = 'Error: ' + err.message;
     result.classList.remove('hidden');
-    showToast('Scoring failed: ' + err.message);
+    showToast('Re-scoring failed: ' + err.message);
   } finally {
-    btns.forEach(b => { if(b) b.disabled = false; });
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -1596,27 +1521,6 @@ function renderFileResults(data) {
     <td>${categoryBadge(l.category)}</td>
     <td>${priorityBadge(l.priority)}</td>
   </tr>`).join('');
-}
-
-async function pushFileToHubspot() {
-  if (!fileLeads.length) { showToast('No leads to push'); return; }
-  const btn = document.getElementById('btnPushHubspot');
-  btn.disabled = true;
-  btn.textContent = 'Pushing…';
-  try {
-    const data = await apiFetch('/file/push-to-hubspot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ leads: fileLeads })
-    });
-    showToast(`${data.created} contacts created in HubSpot`, 4000);
-    btn.textContent = `${data.created} pushed`;
-  } catch (err) {
-    showToast('Push failed: ' + err.message);
-    btn.textContent = 'Push to HubSpot';
-  } finally {
-    btn.disabled = false;
-  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1896,7 +1800,6 @@ document.addEventListener('DOMContentLoaded', () => {
     else checkConnection();
   });
 
-  document.getElementById('btnScoreAll').addEventListener('click', runScoringAll);
   document.getElementById('btnScoreAllBig').addEventListener('click', runScoringAll);
 
   // Contacts
@@ -1905,7 +1808,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // File Upload
   initFileUpload();
-  document.getElementById('btnPushHubspot').addEventListener('click', pushFileToHubspot);
   document.getElementById('btnDownloadCSV').addEventListener('click', downloadCSV);
 
   // HubSpot Pull

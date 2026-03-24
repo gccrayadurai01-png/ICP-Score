@@ -56,88 +56,6 @@ router.post('/setup', async (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-//  HUBSPOT SCORING
-// ═════════════════════════════════════════════════════════════════════════════
-
-// POST /api/score/all
-router.post('/score/all', async (req, res) => {
-  try {
-    const contacts = await hs.getAllContacts();
-    const updates  = [];
-    const log      = [];
-
-    for (const contact of contacts) {
-      const cp = contact.properties;
-
-      let companyProps = {};
-      const companyId  =
-        contact.associations?.companies?.results?.[0]?.id ||
-        cp.associatedcompanyid;
-
-      if (companyId) {
-        try {
-          const company = await hs.getCompany(companyId);
-          companyProps  = company.properties;
-        } catch (_) {}
-      }
-
-      const result = scoreContact(cp, companyProps);
-
-      updates.push({
-        id: contact.id,
-        properties: {
-          icp_score:    String(result.score),
-          icp_category: result.category,
-          icp_priority: result.priority
-        }
-      });
-
-      log.push({
-        id: contact.id, email: cp.email,
-        score: result.score, category: result.category, priority: result.priority
-      });
-    }
-
-    await hs.batchUpdateContacts(updates);
-    res.json({ ok: true, total: contacts.length, updated: updates.length, log });
-  } catch (err) {
-    console.error('score/all error:', err);
-    res.status(500).json({ ok: false, message: err.message });
-  }
-});
-
-// POST /api/score/:contactId
-router.post('/score/:contactId', async (req, res) => {
-  try {
-    const { contactId } = req.params;
-    const writeback     = req.query.save !== 'false';
-
-    const contact = await hs.getContact(contactId);
-    const cp      = contact.properties;
-
-    let companyProps = {};
-    const companyId  =
-      contact.associations?.companies?.results?.[0]?.id ||
-      cp.associatedcompanyid;
-
-    if (companyId) {
-      try { const co = await hs.getCompany(companyId); companyProps = co.properties; } catch (_) {}
-    }
-
-    const result = scoreContact(cp, companyProps);
-    if (writeback) {
-      await hs.updateContact(contactId, {
-        icp_score: String(result.score), icp_category: result.category, icp_priority: result.priority
-      });
-    }
-
-    res.json({ ok: true, contactId, ...result });
-  } catch (err) {
-    res.status(500).json({ ok: false, message: err.message });
-  }
-});
-
-// ═════════════════════════════════════════════════════════════════════════════
 //  DASHBOARD / CONTACTS
 // ═════════════════════════════════════════════════════════════════════════════
 
@@ -157,20 +75,6 @@ router.get('/contacts', async (req, res) => {
     // Read from local SQLite — instant!
     const rows = db.getContactsList();
     res.json({ ok: true, total: rows.length, contacts: rows });
-  } catch (err) {
-    res.status(500).json({ ok: false, message: err.message });
-  }
-});
-
-// POST /api/hubspot/batch-update  — directly update contacts with pre-scored results
-router.post('/hubspot/batch-update', async (req, res) => {
-  try {
-    const { updates } = req.body;
-    if (!Array.isArray(updates) || !updates.length) {
-      return res.status(400).json({ ok: false, message: '"updates" array is required' });
-    }
-    await hs.batchUpdateContacts(updates);
-    res.json({ ok: true, updated: updates.length });
   } catch (err) {
     res.status(500).json({ ok: false, message: err.message });
   }
@@ -273,7 +177,7 @@ router.post('/hubspot/pull-and-score', async (req, res) => {
       leadSources, mqlType, ownerIds, teamId,
       ownerAssignedFrom, ownerAssignedTo,
       dateFrom, dateTo, lifecycleStage,
-      enrich, repId, writeBack,
+      enrich, repId,
       // legacy compat
       leadSource, lifecycle
     } = req.body;
@@ -379,22 +283,7 @@ router.post('/hubspot/pull-and-score', async (req, res) => {
       return scored;
     });
 
-    // 7. Write back to HubSpot if requested
-    if (writeBack) {
-      const updates = scoredLeads
-        .filter(l => l._hubspotId)
-        .map(l => ({
-          id: l._hubspotId,
-          properties: {
-            icp_score:    String(l.score),
-            icp_category: l.category,
-            icp_priority: l.priority
-          }
-        }));
-      if (updates.length) await hs.batchUpdateContacts(updates);
-    }
-
-    // 8. Save to rep store if repId provided
+    // 7. Save to rep store if repId provided
     const categoryStats = scoredLeads.reduce((acc, l) => {
       acc[l.category] = (acc[l.category] || 0) + 1;
       return acc;
@@ -415,7 +304,8 @@ router.post('/hubspot/pull-and-score', async (req, res) => {
       }
     }
 
-    // Keep _hubspotId so frontend can push updates back to HubSpot
+    // Clean internal IDs
+    scoredLeads.forEach(l => delete l._hubspotId);
 
     res.json({
       ok: true,
@@ -423,7 +313,6 @@ router.post('/hubspot/pull-and-score', async (req, res) => {
       stats: categoryStats,
       enrichStats,
       leads: scoredLeads,
-      wroteBack: !!writeBack,
       uploadId: uploadRecord?.id || null
     });
   } catch (err) {
@@ -544,52 +433,6 @@ router.post('/enrich/single', async (req, res) => {
     delete scored._enriched;
     res.json({ ok: true, lead: scored });
   } catch (err) {
-    res.status(500).json({ ok: false, message: err.message });
-  }
-});
-
-// POST /api/file/push-to-hubspot   body: { leads: [...] }
-router.post('/file/push-to-hubspot', async (req, res) => {
-  try {
-    const { leads } = req.body;
-    if (!Array.isArray(leads) || !leads.length) {
-      return res.status(400).json({ ok: false, message: '"leads" array is required' });
-    }
-
-    const client = hs.getClient();
-    const inputs = leads
-      .filter(l => l.email)
-      .map(lead => {
-        const parts     = (lead.name || '').trim().split(/\s+/);
-        const firstname = parts[0] || '';
-        const lastname  = parts.slice(1).join(' ') || '';
-        return {
-          properties: {
-            firstname, lastname,
-            email:        lead.email || '',
-            jobtitle:     lead.jobTitle || '',
-            country:      lead.country || '',
-            phone:         lead.phone || '',
-            icp_score:    lead.score != null ? String(lead.score) : '',
-            icp_category: lead.category || '',
-            icp_priority: lead.priority || ''
-          }
-        };
-      });
-
-    if (!inputs.length) {
-      return res.status(400).json({ ok: false, message: 'No leads with an email address found' });
-    }
-
-    let created = 0;
-    for (let i = 0; i < inputs.length; i += 100) {
-      await client.crm.contacts.batchApi.create({ inputs: inputs.slice(i, i + 100) });
-      created += inputs.slice(i, i + 100).length;
-    }
-
-    res.json({ ok: true, created });
-  } catch (err) {
-    console.error('push-to-hubspot error:', err);
     res.status(500).json({ ok: false, message: err.message });
   }
 });
