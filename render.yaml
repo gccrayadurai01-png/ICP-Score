@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: icp-score
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HUBSPOT_ACCESS_TOKEN
+        sync: false
+      - key: APOLLO_API_KEY
+        sync: false
+    disk:
+      name: icp-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudFuze ICP Score</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ════════════════════════ SIDEBAR ═════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">CF</div>
+    <span>CloudFuze <small style="font-size:11px;font-weight:400;color:var(--muted)">ICP</small></span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-view="dashboard">
+      <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="#" class="nav-item" data-view="rep-tracker">
+      <svg viewBox="0 0 24 24"><path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/></svg>
+      <span>Rep Tracker</span>
+    </a>
+    <a href="#" class="nav-item" data-view="hubspot-pull">
+      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      <span>HubSpot Pull</span>
+    </a>
+    <a href="#" class="nav-item" data-view="pdf">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z"/></svg>
+      <span>File Upload</span>
+    </a>
+    <a href="#" class="nav-item" data-view="contacts">
+      <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span>Contacts</span>
+    </a>
+    <a href="#" class="nav-item" data-view="score">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+      <span>Run Scoring</span>
+    </a>
+    <a href="#" class="nav-item" data-view="admin">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      <span>Admin Panel</span>
+    </a>
+    <a href="#" class="nav-item" data-view="setup">
+      <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      <span>Setup</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="connection-status" id="connectionStatus">
+      <span class="dot"></span>
+      <span>Checking…</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ════════════════════════ MAIN ════════════════════════════════════════════ -->
+<main class="main">
+
+  <header class="topbar">
+    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+    <div class="topbar-actions">
+      <div class="sync-indicator" id="syncIndicator">
+        <span class="sync-dot" id="syncDot"></span>
+        <span class="sync-text" id="syncText">Not synced</span>
+      </div>
+      <button class="btn btn-sync" id="btnSyncHubspot" title="Pull latest data from HubSpot">Sync Now</button>
+      <button class="btn btn-secondary" id="btnRefresh">Refresh</button>
+      <button class="btn btn-primary" id="btnScoreAll">Score All Contacts</button>
+    </div>
+  </header>
+
+  <!-- Sync progress banner -->
+  <div class="sync-banner hidden" id="syncBanner">
+    <div class="spinner"></div>
+    <span id="syncBannerMsg">Syncing contacts from HubSpot…</span>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- ══════════════ DASHBOARD ══════════════════════════════════════════════ -->
+  <section class="view active" id="view-dashboard">
+    <div class="cards-row">
+      <div class="card card-blue"><div class="card-label">Total Contacts</div><div class="card-value" id="statTotal">—</div></div>
+      <div class="card card-green"><div class="card-label">Core ICP</div><div class="card-value" id="statCore">—</div></div>
+      <div class="card card-yellow"><div class="card-label">Strong ICP</div><div class="card-value" id="statStrong">—</div></div>
+      <div class="card card-red"><div class="card-label">Non ICP</div><div class="card-value" id="statNon">—</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-box"><h3>ICP Distribution</h3><div class="chart-wrap"><canvas id="chartCategory"></canvas></div></div>
+      <div class="chart-box"><h3>Top Geographies</h3><div class="chart-wrap"><canvas id="chartGeo"></canvas></div></div>
+    </div>
+    <div class="table-box">
+      <h3>High-Priority Leads</h3>
+      <div class="table-scroll">
+        <table><thead><tr><th>Name / Email</th><th>Score</th><th>Category</th><th>Priority</th></tr></thead>
+          <tbody id="tbodyPriority"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ REP TRACKER ═════════════════════════════════════════════ -->
+  <section class="view" id="view-rep-tracker">
+
+    <!-- Top bar: source tabs + filters -->
+    <div class="rep-top-bar">
+      <div class="source-tabs">
+        <button class="source-tab source-tab-active" id="tabHubspotData" onclick="setRepSource('hubspot')">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="margin-right:5px;vertical-align:-2px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          HubSpot Data
+        </button>
+        <button class="source-tab" id="tabFileUploads" onclick="setRepSource('uploads')">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="margin-right:5px;vertical-align:-2px"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>
+          File Uploads
+        </button>
+      </div>
+      <div class="rep-filters">
+        <select class="filter-select" id="repFilterPeriod" onchange="onRepPeriodChange()">
+          <option value="this_week" selected>This Week</option>
+          <option value="this_month">This Month</option>
+          <option value="last_3months">Last 3 Months</option>
+          <option value="all">All Time</option>
+          <option value="custom">Custom Range</option>
+        </select>
+        <div class="rep-custom-dates hidden" id="repCustomDates">
+          <input type="date" class="admin-input" id="repDateFrom" style="width:140px" />
+          <span style="color:#8892aa;padding:0 4px">→</span>
+          <input type="date" class="admin-input" id="repDateTo" style="width:140px" />
+          <button class="btn btn-primary" onclick="loadRepTracker()">Apply</button>
+        </div>
+        <select class="filter-select" id="repFilterTeam" onchange="loadRepTracker()">
+          <option value="">All Teams</option>
+        </select>
+        <select class="filter-select" id="repFilterRep" onchange="loadRepTracker()">
+          <option value="">All Reps</option>
+        </select>
+        <button class="btn btn-secondary" id="btnManageReps" onclick="openRepModal()">Manage Reps &amp; Teams</button>
+      </div>
+    </div>
+
+    <!-- HubSpot Sync Panel (shown only in HubSpot mode) -->
+    <div class="sync-panel" id="repSyncPanel">
+      <div class="sync-panel-info">
+        <div class="sync-last-time">
+          <span class="sync-label">Last Sync:</span>
+          <span id="lastSyncTime" style="color:#8892aa;font-size:13px">Never synced</span>
+        </div>
+        <div class="sync-date-row">
+          <span style="color:#8892aa;font-size:12px;white-space:nowrap">Sync by:</span>
+          <select class="filter-select" id="syncDateField" style="width:185px">
+            <option value="createdate">Contact Create Date</option>
+            <option value="ownerAssignedDate">Owner Assigned Date</option>
+          </select>
+          <input type="date" class="admin-input" id="syncDateFrom" style="width:140px" />
+          <span style="color:#8892aa;padding:0 4px">→</span>
+          <input type="date" class="admin-input" id="syncDateTo" style="width:140px" />
+        </div>
+      </div>
+      <div class="sync-panel-actions">
+        <button class="btn btn-primary" id="btnSyncHubspot" onclick="syncRepTrackerFromHubSpot()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="margin-right:5px;vertical-align:-2px"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+          Sync from HubSpot
+        </button>
+        <button class="btn btn-secondary" id="btnRescoreAll" onclick="rescoreRepTrackerLeads()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="margin-right:5px;vertical-align:-2px"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          Re-score All Leads
+        </button>
+        <div class="sync-progress hidden" id="syncProgress">
+          <div class="spinner"></div>
+          <span id="syncProgressMsg">Syncing…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary cards (7) -->
+    <div class="cards-row cards-row-7">
+      <div class="card card-blue"><div class="card-label">Total Leads</div><div class="card-value" id="repStatLeads">—</div></div>
+      <div class="card card-orange"><div class="card-label">MQLs</div><div class="card-value" id="repStatMQLs">—</div></div>
+      <div class="card card-teal"><div class="card-label">Avg ICP Score</div><div class="card-value" id="repStatAvgScore">—</div></div>
+      <div class="card card-indigo"><div class="card-label">Core ICP</div><div class="card-value" id="repStatCore">—</div></div>
+      <div class="card card-green"><div class="card-label">Strong ICP</div><div class="card-value" id="repStatStrong">—</div></div>
+      <div class="card card-yellow"><div class="card-label">Moderate ICP</div><div class="card-value" id="repStatModerate">—</div></div>
+      <div class="card card-red"><div class="card-label">Non ICP</div><div class="card-value" id="repStatNon">—</div></div>
+    </div>
+
+    <!-- Charts row 1 -->
+    <div class="charts-row">
+      <div class="chart-box"><h3>ICP Distribution by Rep</h3><div class="chart-wrap chart-wrap-lg"><canvas id="chartRepCategory"></canvas></div></div>
+      <div class="chart-box"><h3>Weekly Trend</h3><div class="chart-wrap chart-wrap-lg"><canvas id="chartWeeklyTrend"></canvas></div></div>
+    </div>
+
+    <!-- Charts row 2 -->
+    <div class="charts-row">
+      <div class="chart-box"><h3>Score Distribution</h3><div class="chart-wrap chart-wrap-lg"><canvas id="chartScoreDist"></canvas></div></div>
+      <div class="chart-box"><h3>MQL Count by Rep</h3><div class="chart-wrap chart-wrap-lg"><canvas id="chartMqlByRep"></canvas></div></div>
+    </div>
+
+    <!-- Rep Leaderboard -->
+    <div class="table-box">
+      <h3>Rep Leaderboard</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Rep / Owner</th><th>Team</th><th>Total Leads</th>
+            <th>MQLs</th><th>Avg ICP Score</th>
+            <th>Core ICP</th><th>Strong ICP</th><th>Moderate ICP</th><th>Non ICP</th>
+            <th>80–100</th><th>65–79</th><th>50–64</th><th>0–49</th>
+          </tr></thead>
+          <tbody id="tbodyRepLeaderboard"><tr><td colspan="13" class="empty">No data yet. Sync from HubSpot or upload files with a rep selected.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Team Breakdown -->
+    <div class="table-box">
+      <h3>Team Breakdown</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Team</th><th>Reps</th><th>Total Leads</th><th>MQLs</th><th>Avg ICP</th><th>Core ICP</th><th>Strong ICP</th><th>Non ICP</th></tr></thead>
+          <tbody id="tbodyTeamBreakdown"><tr><td colspan="8" class="empty">No teams created yet.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Uploads (file uploads mode only) -->
+    <div class="table-box hidden" id="repUploadsSection">
+      <h3>Recent Uploads</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Date</th><th>Rep</th><th>Team</th><th>File</th><th>Leads</th><th>Core</th><th>Strong</th><th>Actions</th></tr></thead>
+          <tbody id="tbodyRecentUploads"><tr><td colspan="8" class="empty">No uploads yet.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Top Scored Leads -->
+    <div class="table-box">
+      <h3>Top Scored Leads</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Name / Email</th><th>Company</th><th>Title</th><th>Country</th><th>Owner</th><th>Lead Source</th><th>Score</th><th>Category</th></tr></thead>
+          <tbody id="tbodyRepTopLeads"><tr><td colspan="8" class="empty">No data yet.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════════════ MANAGE REPS MODAL ═══════════════════════════════════════ -->
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Manage Reps & Teams</h2>
+        <button class="modal-close" id="btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Teams section -->
+        <div class="modal-section">
+          <h3>Teams</h3>
+          <div class="inline-form">
+            <input class="admin-input" id="newTeamName" placeholder="Team name" />
+            <button class="btn btn-primary" id="btnAddTeam">Add Team</button>
+          </div>
+          <div id="teamsList" class="item-list"></div>
+        </div>
+
+        <!-- Reps section -->
+        <div class="modal-section">
+          <h3>Sales Reps</h3>
+          <div class="inline-form">
+            <input class="admin-input" id="newRepName" placeholder="Rep name" style="flex:2" />
+            <input class="admin-input" id="newRepEmail" placeholder="Email (optional)" style="flex:2" />
+            <select class="filter-select" id="newRepTeam" style="flex:1"><option value="">No Team</option></select>
+            <button class="btn btn-primary" id="btnAddRep">Add Rep</button>
+          </div>
+          <div id="repsList" class="item-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ HUBSPOT PULL ═══════════════════════════════════════════ -->
+  <section class="view" id="view-hubspot-pull">
+
+    <!-- ── Advanced Filter Panel ── -->
+    <div class="hs-filter-panel">
+      <div class="hs-filter-header">
+        <h2>Advanced Filters</h2>
+        <button class="btn btn-secondary btn-sm" id="btnClearPullFilters">Clear All</button>
+      </div>
+
+      <div class="hs-filter-grid">
+
+        <!-- Owner Assigned Date -->
+        <div class="hs-filter-block hs-filter-block-wide">
+          <label class="hs-filter-label">Owner Assigned Date</label>
+          <div class="hs-date-presets" id="ownerDatePresets">
+            <button class="preset-btn" data-preset="last_week">Last Week</button>
+            <button class="preset-btn" data-preset="last_month">Last Month</button>
+            <button class="preset-btn" data-preset="last_3months">Last 3 Months</button>
+            <button class="preset-btn" data-preset="custom">Custom</button>
+          </div>
+          <div class="hs-date-range hidden" id="ownerDateCustom">
+            <input type="date" class="admin-input" id="pullOwnerFrom" placeholder="From" />
+            <span style="color:#8892aa">→</span>
+            <input type="date" class="admin-input" id="pullOwnerTo" placeholder="To" />
+          </div>
+        </div>
+
+        <!-- Contact Owner (Sales Rep) -->
+        <div class="hs-filter-block">
+          <label class="hs-filter-label">Contact Owner</label>
+          <select class="filter-select" id="pullOwnerSelect">
+            <option value="">All Owners</option>
+          </select>
+        </div>
+
+        <!-- HubSpot Team -->
+        <div class="hs-filter-block">
+          <label class="hs-filter-label">HubSpot Team</label>
+          <select class="filter-select" id="pullTeamSelect">
+            <option value="">All Teams</option>
+          </select>
+        </div>
+
+        <!-- MQL Type -->
+        <div class="hs-filter-block">
+          <label class="hs-filter-label">MQL Type</label>
+          <select class="filter-select" id="pullMqlType">
+            <option value="">All MQL Types</option>
+          </select>
+        </div>
+
+        <!-- Lifecycle Stage -->
+        <div class="hs-filter-block">
+          <label class="hs-filter-label">Lifecycle Stage</label>
+          <select class="filter-select" id="pullLifecycle">
+            <option value="">All Stages</option>
+            <option value="lead">Lead</option>
+            <option value="marketingqualifiedlead">MQL</option>
+            <option value="salesqualifiedlead">SQL</option>
+            <option value="opportunity">Opportunity</option>
+            <option value="customer">Customer</option>
+          </select>
+        </div>
+
+        <!-- Lead Source (multi-select checkboxes) -->
+        <div class="hs-filter-block hs-filter-block-full">
+          <label class="hs-filter-label">Lead Source <span style="font-weight:400;color:#8892aa">(select one or more)</span></label>
+          <div class="hs-lead-source-grid" id="leadSourceGrid">
+            <div style="color:#8892aa;font-size:13px">Loading lead sources…</div>
+          </div>
+        </div>
+
+        <!-- Options Row -->
+        <div class="hs-filter-block hs-filter-block-full">
+          <div class="hs-options-row">
+            <label class="hs-toggle-label">
+              <label class="switch"><input type="checkbox" id="pullEnrich" checked /><span class="slider"></span></label>
+              <span>Enrich via Apollo</span>
+            </label>
+            <label class="hs-toggle-label">
+              <label class="switch"><input type="checkbox" id="pullWriteBack" /><span class="slider"></span></label>
+              <span>Write scores back to HubSpot after scoring</span>
+            </label>
+            <div class="hs-filter-block" style="padding:0">
+              <label class="hs-filter-label" style="margin-bottom:6px">Assign to Rep (tracking)</label>
+              <select class="filter-select" id="pullRepSelect">
+                <option value="">— No Rep —</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /hs-filter-grid -->
+
+      <!-- Action buttons -->
+      <div class="hs-filter-actions">
+        <button class="btn btn-primary btn-lg" id="btnPullAndScore">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right:6px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Pull &amp; Score Contacts
+        </button>
+        <div class="score-progress hidden" id="pullProgress">
+          <div class="spinner"></div>
+          <span id="pullProgressMsg">Pulling contacts from HubSpot…</span>
+        </div>
+      </div>
+    </div><!-- /hs-filter-panel -->
+
+    <!-- ── Results ── -->
+    <div id="pullResults" class="hidden">
+
+      <!-- Summary row -->
+      <div class="hs-results-summary">
+        <div class="cards-row" id="pullStatsCards"></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" id="btnPullUpdateAll">Update All in HubSpot</button>
+          <button class="btn btn-secondary" id="btnPullDownloadCSV">Download CSV</button>
+          <span class="hs-result-count" id="pullResultCount"></span>
+        </div>
+      </div>
+
+      <!-- Enrichment banner -->
+      <div class="enrich-banner hidden" id="pullEnrichBanner"></div>
+
+      <!-- Results table -->
+      <div class="table-box">
+        <div class="table-box-header">
+          <h3>Contacts — ICP Scored</h3>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input class="admin-input" id="pullSearch" placeholder="Search name / email…" style="width:220px;padding:7px 12px" />
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table id="tablePull">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="chkPullAll" title="Select all" /></th>
+                <th>Name / Email</th>
+                <th>Owner</th>
+                <th>Team</th>
+                <th>Lead Source</th>
+                <th>MQL Type</th>
+                <th>Cloud (Src → Dest)</th>
+                <th>Owner Assigned</th>
+                <th>Score</th>
+                <th style="min-width:260px">Score Breakdown</th>
+                <th>Category</th>
+                <th>Priority</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyPull"><tr><td colspan="13" class="empty">Run the filter above to pull contacts.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /pullResults -->
+
+  </section>
+
+  <!-- ══════════════ FILE UPLOAD ═════════════════════════════════════════════ -->
+  <section class="view" id="view-pdf">
+
+    <!-- Upload card -->
+    <div class="action-card">
+      <h2>Import &amp; Enrich Leads</h2>
+      <p>Upload a CSV or Excel file with <strong>Email</strong> and/or <strong>Company Name</strong>. Apollo.io will auto-enrich each lead with employee count, job title, country, industry, tech stack, and more. Then ICP scoring runs automatically.</p>
+
+      <!-- Rep selector -->
+      <div class="rep-selector" style="margin-bottom:16px;display:flex;align-items:center;gap:12px">
+        <label style="color:#cdd4e0;font-size:14px;font-weight:500">Assign to Rep:</label>
+        <select class="filter-select" id="uploadRepSelect" style="min-width:200px">
+          <option value="">— No Rep (skip tracking) —</option>
+        </select>
+      </div>
+
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="#4f8ef7"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z"/></svg>
+        </div>
+        <p class="upload-hint">Drag &amp; drop your CSV / Excel file here, or click to browse</p>
+        <p class="upload-hint-small" id="uploadFilename">No file selected</p>
+        <input type="file" id="fileInput" accept=".csv,.xls,.xlsx" hidden />
+        <button class="btn btn-secondary" id="btnBrowse">Browse Files</button>
+      </div>
+
+      <!-- Enrich toggle -->
+      <div class="enrich-toggle" style="margin:16px 0;display:flex;align-items:center;gap:10px">
+        <label class="switch">
+          <input type="checkbox" id="chkEnrich" checked />
+          <span class="slider"></span>
+        </label>
+        <span style="color:#cdd4e0;font-size:14px">Enrich via Apollo.io <span style="color:#8892aa">(fills missing fields: employee size, country, title, industry, tech stack)</span></span>
+      </div>
+
+      <div class="upload-actions">
+        <button class="btn btn-primary btn-lg" id="btnAnalyze" disabled>Upload, Enrich &amp; Score</button>
+      </div>
+
+      <div class="score-progress hidden" id="pdfProgress">
+        <div class="spinner"></div>
+        <span id="pdfProgressMsg">Processing file…</span>
+      </div>
+      <div class="score-result hidden" id="pdfError"></div>
+    </div>
+
+    <!-- Results (hidden until analysis completes) -->
+    <div id="pdfResults" class="hidden">
+      <!-- Enrichment stats banner -->
+      <div class="enrich-banner" id="enrichBanner" style="display:none"></div>
+
+      <!-- Stats cards -->
+      <div class="cards-row" id="pdfStatsCards"></div>
+
+      <!-- Results table -->
+      <div class="table-box">
+        <div class="table-box-header">
+          <h3>Enriched &amp; Scored Leads</h3>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-secondary" id="btnDownloadCSV">Download CSV</button>
+            <button class="btn btn-primary" id="btnPushHubspot">Push to HubSpot</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Name / Email</th>
+                <th>Company</th>
+                <th>Job Title</th>
+                <th>Employees</th>
+                <th>Country</th>
+                <th>Industry</th>
+                <th>Created Date</th>
+                <th>Score</th>
+                <th>Category</th>
+                <th>Priority</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyFile"><tr><td colspan="10" class="empty">No results yet.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Breakdown accordion -->
+      <div class="table-box">
+        <h3>Score Breakdown Legend</h3>
+        <div style="padding:12px 16px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+          <div class="mini-stat"><span>Company Size</span><b>max 35</b></div>
+          <div class="mini-stat"><span>Geography</span><b>max 35</b></div>
+          <div class="mini-stat"><span>Industry</span><b>max 10</b></div>
+          <div class="mini-stat"><span>Technology</span><b>max 10</b></div>
+          <div class="mini-stat"><span>Buyer Fit</span><b>max 10</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ CONTACTS ════════════════════════════════════════════════ -->
+  <section class="view" id="view-contacts">
+    <div class="toolbar">
+      <input class="search-input" id="contactSearch" placeholder="Search by name or email…" />
+      <select class="filter-select" id="filterCategory">
+        <option value="">All Categories</option>
+        <option>Core ICP</option><option>Strong ICP</option>
+        <option>Moderate ICP</option><option>Non ICP</option>
+      </select>
+    </div>
+    <div class="table-box">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Name / Email</th><th>Job Title</th><th>Country</th><th>Score</th><th>Category</th><th>Priority</th></tr></thead>
+          <tbody id="tbodyContacts"><tr><td colspan="6" class="empty">Click Refresh to load.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="table-meta" id="contactsMeta"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ RUN SCORING ════════════════════════════════════════════ -->
+  <section class="view" id="view-score">
+    <div class="action-card">
+      <h2>Score All HubSpot Contacts</h2>
+      <p>Fetches every contact from HubSpot, calculates their ICP score based on the current scoring model, and writes <code>icp_score</code>, <code>icp_category</code>, and <code>icp_priority</code> back to each record.</p>
+      <button class="btn btn-primary btn-lg" id="btnScoreAllBig">Run Scoring Now</button>
+      <div class="score-progress hidden" id="scoreProgress"><div class="spinner"></div><span id="scoreProgressMsg">Scoring…</span></div>
+      <div class="score-result hidden" id="scoreResult"></div>
+    </div>
+    <div class="model-grid">
+      <div class="model-card"><h4>Company Size <span class="max-badge">35 pts</span></h4><table class="mini-table"><tr><td>&gt; 500</td><td><b>35</b></td></tr><tr><td>250–500</td><td><b>25</b></td></tr><tr><td>50–249</td><td><b>15</b></td></tr><tr><td>&lt; 50</td><td><b>5</b></td></tr></table></div>
+      <div class="model-card"><h4>Geography <span class="max-badge">35 pts</span></h4><table class="mini-table"><tr><td>US / CA / UK</td><td><b>35</b></td></tr><tr><td>EU / AU / India</td><td><b>25</b></td></tr><tr><td>Other</td><td><b>10</b></td></tr></table></div>
+      <div class="model-card"><h4>Industry <span class="max-badge">10 pts</span></h4><table class="mini-table"><tr><td>Software / IT</td><td><b>10</b></td></tr><tr><td>Finance / Health</td><td><b>8</b></td></tr><tr><td>Education</td><td><b>6</b></td></tr><tr><td>Other</td><td><b>4</b></td></tr></table></div>
+      <div class="model-card"><h4>Technology <span class="max-badge">10 pts</span></h4><table class="mini-table"><tr><td>M365 / Google WS</td><td><b>10</b></td></tr><tr><td>Dropbox / Slack…</td><td><b>8</b></td></tr><tr><td>Other cloud</td><td><b>5</b></td></tr><tr><td>None</td><td><b>0</b></td></tr></table></div>
+      <div class="model-card"><h4>Buyer Fit <span class="max-badge">10 pts</span></h4><table class="mini-table"><tr><td>CIO/CTO/CEO/IT Dir</td><td><b>10</b></td></tr><tr><td>IT Mgr / Admin</td><td><b>7</b></td></tr><tr><td>Consultant</td><td><b>5</b></td></tr><tr><td>Non-IT</td><td><b>0</b></td></tr></table></div>
+      <div class="model-card"><h4>ICP Categories</h4><table class="mini-table"><tr><td>80–100</td><td><b class="cat core">Core ICP</b></td></tr><tr><td>65–79</td><td><b class="cat strong">Strong ICP</b></td></tr><tr><td>50–64</td><td><b class="cat moderate">Moderate ICP</b></td></tr><tr><td>0–49</td><td><b class="cat non">Non ICP</b></td></tr></table></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ ADMIN PANEL ════════════════════════════════════════════ -->
+  <section class="view" id="view-admin">
+    <div class="admin-topbar">
+      <div>
+        <h2 class="admin-title">Scoring Configuration</h2>
+        <p class="admin-subtitle">Edit the ICP scoring rules. Changes take effect immediately after saving.</p>
+      </div>
+      <div class="admin-toolbar">
+        <button class="btn btn-secondary" id="btnResetConfig">Reset to Defaults</button>
+        <button class="btn btn-primary" id="btnSaveConfig">Save Changes</button>
+      </div>
+    </div>
+
+    <div class="score-result hidden" id="adminResult"></div>
+
+    <!-- Tab nav -->
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="companySize">Company Size</button>
+      <button class="tab-btn" data-tab="geography">Geography</button>
+      <button class="tab-btn" data-tab="industry">Industry</button>
+      <button class="tab-btn" data-tab="technology">Technology</button>
+      <button class="tab-btn" data-tab="buyerFit">Buyer Fit</button>
+      <button class="tab-btn" data-tab="categories">ICP Categories</button>
+    </div>
+
+    <!-- Tab content (rendered by JS) -->
+    <div id="adminTabContent">
+      <div class="empty" style="padding:40px">Loading configuration…</div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SETUP ══════════════════════════════════════════════════ -->
+  <section class="view" id="view-setup">
+    <div class="action-card">
+      <h2>HubSpot Setup</h2>
+      <p>Create the three custom contact properties in HubSpot. Safe to run multiple times.</p>
+      <p class="setup-props"><code>icp_score</code> (Number) &nbsp;·&nbsp; <code>icp_category</code> (Dropdown) &nbsp;·&nbsp; <code>icp_priority</code> (Dropdown)</p>
+      <button class="btn btn-primary btn-lg" id="btnSetup">Create HubSpot Properties</button>
+      <div class="score-progress hidden" id="setupProgress"><div class="spinner"></div><span>Creating…</span></div>
+      <div class="score-result hidden" id="setupResult"></div>
+    </div>
+    <div class="action-card">
+      <h2>Connection Test</h2>
+      <p>Verify your <code>HUBSPOT_ACCESS_TOKEN</code> is valid.</p>
+      <button class="btn btn-secondary btn-lg" id="btnTestConn">Test Connection</button>
+      <div class="score-result hidden" id="connResult"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════ LEAD LIST POPUP ═════════════════════════════════════════ -->
+<div class="modal-overlay hidden" id="leadPopupOverlay">
+  <div class="modal" style="width:900px;max-width:95vw;max-height:85vh">
+    <div class="modal-header">
+      <h2 id="leadPopupTitle">Leads</h2>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="leadPopupCount" class="badge" style="background:var(--surface2);color:var(--muted)"></span>
+        <button class="modal-close" id="btnCloseLeadPopup">&times;</button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:0;overflow:hidden">
+      <div class="table-scroll" style="max-height:60vh;overflow-y:auto">
+        <table>
+          <thead><tr>
+            <th>Name / Email</th><th>Company</th><th>Owner</th><th>Score</th><th>Category</th><th>Lead Source</th><th>Cloud</th><th></th>
+          </tr></thead>
+          <tbody id="leadPopupBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ LEAD DETAIL POPUP (ICP Breakdown) ═════════════════════ -->
+<div class="modal-overlay hidden" id="leadDetailOverlay">
+  <div class="modal" style="width:640px;max-width:95vw">
+    <div class="modal-header">
+      <div>
+        <h2 id="leadDetailName" style="margin-bottom:2px">Lead Details</h2>
+        <div id="leadDetailEmail" style="font-size:12px;color:var(--muted);font-weight:400"></div>
+      </div>
+      <button class="modal-close" id="btnCloseLeadDetail">&times;</button>
+    </div>
+    <div class="modal-body" id="leadDetailBody"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

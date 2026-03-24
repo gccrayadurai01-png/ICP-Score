@@ -1,0 +1,132 @@
+// ─── HubSpot field names ──────────────────────────────────────────────────────
+const CONTACT_PROPERTIES = [
+  'firstname', 'lastname', 'email', 'jobtitle', 'phone',
+  'country',
+  'hs_lead_status',
+  'hs_analytics_source',       // lead source (ORGANIC, PAID, REFERRAL, etc.)
+  'hs_analytics_source_data_1',// sub-source detail
+  'hs_analytics_source_data_2',// sub-source detail 2
+  'hs_lifecyclestage_marketingqualifiedlead_date', // MQL date
+  'lifecyclestage',            // subscriber, lead, mql, sql, etc.
+  'createdate',                // contact create date
+  'numberofemployees',         // contact-level employee count
+  'industry',                  // contact-level industry
+  'associatedcompanyid',
+  'icp_score', 'icp_category', 'icp_priority',
+  'hubspot_owner_id',          // contact owner (sales rep)
+  'hubspot_owner_assigneddate', // date owner was assigned
+  'mql_type',                  // MQL type (Business MQL, etc.)
+  'hs_email_domain',           // company domain from email
+  'lead_source',               // CloudFuze custom lead source (Web_Pricing, Chat, Email, etc.)
+  'source__cloud',             // Source cloud (Box, Dropbox, Slack, etc.)
+  'destination_cloud',         // Destination cloud (free text)
+  'type_of_destination',       // Destination cloud enum (Office 365, Google Workspace, Teams)
+  'source_destination'         // Source_Cloud alias
+];
+
+const COMPANY_PROPERTIES = [
+  'name', 'domain', 'numberofemployees',
+  'country', 'industry',
+  'technologies',          // default tech-stack field (customisable via .env)
+  'hubspot_owner_id', 'hs_lead_status'
+];
+
+// ─── Geography ────────────────────────────────────────────────────────────────
+const GEO_TIER1 = new Set([
+  'united states', 'us', 'usa', 'u.s.', 'u.s.a.',
+  'canada', 'ca',
+  'united kingdom', 'uk', 'gb', 'great britain', 'england', 'scotland', 'wales', 'northern ireland'
+]);
+
+const GEO_TIER2 = new Set([
+  // Europe
+  'germany', 'de', 'france', 'fr', 'spain', 'es', 'italy', 'it',
+  'netherlands', 'nl', 'belgium', 'be', 'sweden', 'se', 'norway', 'no',
+  'denmark', 'dk', 'finland', 'fi', 'poland', 'pl', 'czech republic', 'cz',
+  'austria', 'at', 'switzerland', 'ch', 'portugal', 'pt', 'greece', 'gr',
+  'hungary', 'hu', 'romania', 'ro', 'bulgaria', 'bg', 'croatia', 'hr',
+  'slovakia', 'sk', 'slovenia', 'si', 'estonia', 'ee', 'latvia', 'lv',
+  'lithuania', 'lt', 'luxembourg', 'lu', 'malta', 'mt', 'cyprus', 'cy',
+  'ireland', 'ie', 'iceland', 'is', 'liechtenstein',
+  // Australia & India
+  'australia', 'au', 'india', 'in'
+]);
+
+// ─── Industry tiers ───────────────────────────────────────────────────────────
+// Values cover both HubSpot enum keys and human-readable labels
+const INDUSTRY_TIER1_KEYWORDS = [
+  'computer software', 'software', 'information technology', 'it services',
+  'it consulting', 'technology', 'saas', 'tech'
+];
+
+const INDUSTRY_TIER2_KEYWORDS = [
+  'financial services', 'finance', 'banking', 'insurance',
+  'marketing', 'advertising', 'digital marketing',
+  'hospital', 'health care', 'healthcare', 'medical', 'pharma', 'biotech'
+];
+
+const INDUSTRY_TIER3_KEYWORDS = [
+  'education', 'e-learning', 'elearning', 'higher education',
+  'university', 'school', 'academic', 'training'
+];
+
+// ─── Technology tiers ─────────────────────────────────────────────────────────
+const TECH_TIER1_KEYWORDS = [
+  'microsoft 365', 'office 365', 'm365', 'o365',
+  'google workspace', 'g suite', 'gsuite'
+];
+
+const TECH_TIER2_KEYWORDS = [
+  'dropbox', 'box.com', 'egnyte', 'slack', 'sharefile'
+];
+
+const TECH_TIER3_KEYWORDS = [
+  'cloud', 'aws', 'azure', 'gcp', 'onedrive', 'sharepoint',
+  'zoom', 'teams', 'salesforce', 'hubspot'
+];
+
+// ─── Buyer Fit (job title) ────────────────────────────────────────────────────
+const BUYER_TIER1_KEYWORDS = [
+  'cio', 'chief information officer',
+  'cto', 'chief technology officer',
+  'ceo', 'chief executive',
+  'it director', 'director of it', 'director, it',
+  'head of it', 'vp of it', 'vp it', 'vice president of it',
+  'head of technology', 'vp of technology'
+];
+
+const BUYER_TIER2_KEYWORDS = [
+  'it manager', 'it admin', 'it administrator',
+  'systems administrator', 'sysadmin', 'sys admin',
+  'network administrator', 'infrastructure manager',
+  'it specialist', 'it lead', 'it supervisor'
+];
+
+const BUYER_TIER3_KEYWORDS = [
+  'consultant', 'consulting', 'advisor', 'strategist'
+];
+
+// ─── ICP Category thresholds ──────────────────────────────────────────────────
+const CATEGORIES = [
+  { label: 'Core ICP',     priority: 'Highest Priority', min: 80, max: 100 },
+  { label: 'Strong ICP',   priority: 'High Priority',    min: 65, max: 79  },
+  { label: 'Moderate ICP', priority: 'Nurture',          min: 50, max: 64  },
+  { label: 'Non ICP',      priority: 'Low Priority',     min: 0,  max: 49  }
+];
+
+module.exports = {
+  CONTACT_PROPERTIES,
+  COMPANY_PROPERTIES,
+  GEO_TIER1,
+  GEO_TIER2,
+  INDUSTRY_TIER1_KEYWORDS,
+  INDUSTRY_TIER2_KEYWORDS,
+  INDUSTRY_TIER3_KEYWORDS,
+  TECH_TIER1_KEYWORDS,
+  TECH_TIER2_KEYWORDS,
+  TECH_TIER3_KEYWORDS,
+  BUYER_TIER1_KEYWORDS,
+  BUYER_TIER2_KEYWORDS,
+  BUYER_TIER3_KEYWORDS,
+  CATEGORIES
+};

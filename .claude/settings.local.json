@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ping -n 3 127.0.0.1)",
+      "Bash(curl -s http://localhost:3000/api/reps)",
+      "Bash(curl -s http://localhost:3000/api/status)",
+      "Bash(curl -s \"http://localhost:3000/api/hubspot/pull?dateFrom=2026-01-01&dateTo=2026-03-17\")",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(node -e \"require\\(''./src/routes''\\)\")",
+      "Bash(curl -s http://localhost:3000/api/hubspot/hs-teams)",
+      "Bash(curl -s \"http://localhost:3000/api/hubspot/property-options/hs_analytics_source\")",
+      "Bash(curl -s http://localhost:3000/api/hubspot/owners)",
+      "Bash(node -e \":*)",
+      "Bash(ping -n 4 127.0.0.1)",
+      "Bash(curl -s \"http://localhost:3000/api/hubspot/property-options/mql_type\")",
+      "Bash(ping -n 2 127.0.0.1)",
+      "Bash(node server.js)",
+      "Bash(curl -s http://localhost:3000/api/hubspot/property-options/lead_source)",
+      "Bash(timeout /t 3 /nobreak)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 74732 //F)",
+      "Bash(node -e \"const r = require\\(''./src/repStore''\\); console.log\\(Object.keys\\(r\\).join\\('', ''\\)\\)\")",
+      "Bash(node -e \"require\\(''./src/repStore''\\); require\\(''./src/routes''\\); console.log\\(''OK''\\)\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(cmd /c \"taskkill /F /IM node.exe\")",
+      "Bash(cmd /c \"taskkill /F /IM node.exe 2>&1\")",
+      "Bash(cmd /c \"netstat -ano | findstr :3000\")",
+      "Bash(cmd /c \"netstat -ano | findstr LISTENING | findstr :3000\")",
+      "Bash(node -e \"require\\(''./src/hubspot''\\); require\\(''./src/routes''\\); console.log\\(''OK''\\)\")",
+      "Bash(node -e \"require\\(''dotenv''\\).config\\(\\); const hs = require\\(''./src/hubspot''\\); hs.searchContactsAdvanced\\({ ownerAssignedFrom: ''2026-03-01'', ownerAssignedTo: ''2026-03-19'' }\\).then\\(r => console.log\\(''SUCCESS:'', r.length, ''contacts''\\)\\).catch\\(e => console.log\\(''FAILED:'', e.body?.message || e.message\\)\\)\")",
+      "Bash(npm install:*)",
+      "Bash(node -e \"require\\(''./src/db''\\); require\\(''./src/routes''\\); console.log\\(''All modules OK''\\)\")"
+    ]
+  }
+}
