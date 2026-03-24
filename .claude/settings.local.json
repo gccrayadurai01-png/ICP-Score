@@ -30,7 +30,8 @@
       "Bash(node -e \"require\\(''./src/hubspot''\\); require\\(''./src/routes''\\); console.log\\(''OK''\\)\")",
       "Bash(node -e \"require\\(''dotenv''\\).config\\(\\); const hs = require\\(''./src/hubspot''\\); hs.searchContactsAdvanced\\({ ownerAssignedFrom: ''2026-03-01'', ownerAssignedTo: ''2026-03-19'' }\\).then\\(r => console.log\\(''SUCCESS:'', r.length, ''contacts''\\)\\).catch\\(e => console.log\\(''FAILED:'', e.body?.message || e.message\\)\\)\")",
       "Bash(npm install:*)",
-      "Bash(node -e \"require\\(''./src/db''\\); require\\(''./src/routes''\\); console.log\\(''All modules OK''\\)\")"
+      "Bash(node -e \"require\\(''./src/db''\\); require\\(''./src/routes''\\); console.log\\(''All modules OK''\\)\")",
+      "Bash(where gh:*)"
     ]
   }
 }
