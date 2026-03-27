@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudFuze ICP Score — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080b14;
+      --surface:   #0f1422;
+      --surface2:  #161d30;
+      --border:    #1e2744;
+      --text:      #e2e8f0;
+      --muted:     #7b8ba8;
+      --blue:      #0129ac;
+      --blue-light:#2d5ce6;
+      --green:     #65bc7b;
+      --red:       #ef4444;
+      --purple:    #6239bd;
+      --radius:    10px;
+      --font:      'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(1,41,172,.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 50%, rgba(98,57,189,.08) 0%, transparent 50%),
+        var(--bg);
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 36px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.4);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+      letter-spacing: .5px;
+      box-shadow: 0 4px 20px rgba(1,41,172,.35);
+    }
+
+    .brand-text {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .brand-text small {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: var(--font);
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--blue-light);
+      box-shadow: 0 0 0 3px rgba(45,92,230,.15);
+    }
+
+    .form-group input::placeholder {
+      color: var(--muted);
+      opacity: .6;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px 24px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-light));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: opacity .15s, transform .1s, box-shadow .2s;
+      box-shadow: 0 4px 16px rgba(1,41,172,.3);
+      margin-top: 8px;
+    }
+
+    .btn-login:hover {
+      opacity: .92;
+      box-shadow: 0 6px 24px rgba(1,41,172,.4);
+    }
+
+    .btn-login:active {
+      transform: scale(.98);
+    }
+
+    .btn-login:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .error-msg {
+      background: rgba(239,68,68,.12);
+      border: 1px solid rgba(239,68,68,.3);
+      color: var(--red);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+      text-align: center;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: .6;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="brand">
+        <div class="brand-icon">CF</div>
+        <div class="brand-text">CloudFuze<small>ICP</small></div>
+      </div>
+
+      <h2>Sign in to continue</h2>
+
+      <div class="error-msg" id="errorMsg">Invalid username or password</div>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" autofocus required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+        </div>
+
+        <button type="submit" class="btn-login" id="btnLogin">Sign In</button>
+      </form>
+    </div>
+
+    <div class="footer">&copy; 2026 CloudFuze, Inc.</div>
+  </div>
+
+  <script>
+    const form     = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const btnLogin = document.getElementById('btnLogin');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.classList.remove('show');
+      btnLogin.disabled = true;
+      btnLogin.textContent = 'Signing in…';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          window.location.href = '/';
+        } else {
+          errorMsg.textContent = data.message || 'Invalid username or password';
+          errorMsg.classList.add('show');
+        }
+      } catch (err) {
+        errorMsg.textContent = 'Connection error. Please try again.';
+        errorMsg.classList.add('show');
+      } finally {
+        btnLogin.disabled = false;
+        btnLogin.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

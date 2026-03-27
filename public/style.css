@@ -62,7 +62,17 @@ body { display: flex; }
 .nav-item.active { background: linear-gradient(135deg, var(--blue), var(--blue-light)); color: #fff; box-shadow: 0 2px 10px rgba(1,41,172,.3); }
 .nav-item.active svg { fill: #fff; }
 
-.sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+
+.btn-logout {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 8px 12px; border-radius: 7px;
+  font-size: 12px; font-weight: 500; font-family: var(--font);
+  background: rgba(239,68,68,.08); color: var(--red);
+  border: 1px solid rgba(239,68,68,.2); cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.btn-logout:hover { background: rgba(239,68,68,.15); border-color: rgba(239,68,68,.35); }
 .connection-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
 .connection-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
 .connection-status.ok .dot { background: var(--green); }

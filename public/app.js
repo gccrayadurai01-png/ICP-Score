@@ -1852,6 +1852,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'leadDetailOverlay') closeLeadDetail();
   });
 
+  // Logout
+  document.getElementById('btnLogout').addEventListener('click', async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (_) {}
+    window.location.href = '/login';
+  });
+
   // Initial load
   checkConnection();
   loadSyncStatus();
